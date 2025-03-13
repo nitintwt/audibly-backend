@@ -1,5 +1,6 @@
 import express from 'express'
 import cors from "cors"
+import userRouter from './routes/user.route.js'
 
 const app = express()
 
@@ -8,12 +9,13 @@ app.use(cors({
   credential:true
 }))
 
-
-app.use(express.json({limit:'16kb'}))   // setting a limit of json , like how much json data can be sent to backend 
-app.use(express.urlencoded({limit:"16kb"})) 
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }));
 
 app.get("/" , (req , res)=>{
   return res.status(200).json({message:"Going good from audibly backend"})
 })
+
+app.use("/api/v1/user" , userRouter)
 
 export {app}
