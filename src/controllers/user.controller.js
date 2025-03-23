@@ -1,7 +1,7 @@
 import createPodcastDraft from "../services/createPodcastDraft.service.js"
-import fs from "fs"
 import createAudioFiles from "../services/createAudioFiles.service.js"
 import mergeAudioFilesUsingFfmpeg from "../services/mergeAudioFilesFFmpeg.service.js"
+import fs from 'fs'
 
 const createPodcast = async(req , res)=>{
   console.log("triggered")
@@ -11,27 +11,23 @@ const createPodcast = async(req , res)=>{
     const podcastDraft = await createPodcastDraft(text)
     console.log("Draft", podcastDraft)
 
-    // Generate Audio files for Speaker A nd Speaker B using two different kokoro voices
-    const audios = await createAudioFiles(podcastDraft)
+    // Generate Audio files for Speaker A and Speaker B using two different kokoro voices
+    const {audios , tempDir} = await createAudioFiles(podcastDraft)
     console.log("audios" , audios)
 
     // Merge audio files
-    const mergedAudioFile = "final_podcast.mp3";
-    await mergeAudioFilesUsingFfmpeg(audios, mergedAudioFile);
+    await mergeAudioFilesUsingFfmpeg(audios, tempDir);
     console.log("saved")
-    return res.status(200).json({ message: "Podcast created"});
+
+    res.status(200).json({ message: "Podcast created"})
+
+    // delete the temp folder
+    //fs.rmSync(tempDir, { recursive: true, force: true })
+    //console.log("Temporary files deleted.");
   } catch (error) {
     console.log("Something went wrong while creating audio" , error)
     return res.status(500).json({message:"Something went wrong while creating your podcast.Try again"})
   }
-}
-
-// Function to generate the FFmpeg file list
-const generateFileList = (audioFiles) => {
-  const filePath = "audio_list.txt"
-  
-  fs.writeFileSync(filePath, fileContent)
-  return filePath
 }
 
 export {createPodcast}
