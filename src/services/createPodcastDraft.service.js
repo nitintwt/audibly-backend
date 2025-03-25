@@ -22,7 +22,7 @@ const createPodcastDraft = async (text)=>{
   {"speaker": "B", "text": "Absolutely, the way deep learning is evolving opens up many possibilities."},
   ]
 
-  ** The output should always be a valid array with open and closed brackets
+  ** The output should always be a valid json array with open and closed brackets, [] **
   `  
   try {
     const response = await client.chatCompletion({

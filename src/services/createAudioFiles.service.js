@@ -15,24 +15,29 @@ const createAudioFiles = async (podcastDraft) => {
   fs.mkdirSync(tempDir , {recursive:true})
 
   const audios = await Promise.all(podcastDraft.map(async (speech, index) => {
-    const response = await axios.post("http://localhost:8880/v1/audio/speech", {
-      "model": "kokoro",
-      "input": speech.text,
-      "voice": speech.speaker == 'A' ? "af_alloy" : "af_bella",
-      "response_format": "mp3",
-      "download_format": "mp3",
-      "speed": 1,
-      "stream": true,
-      "return_download_link": true,
-      "lang_code": "b",
-    }, {
-      responseType: "arraybuffer"
-    })
-    
-    const fileName = `speech_${speech.speaker}_${index}.mp3`
-    const filePath = path.join(tempDir , fileName)
-    fs.writeFileSync(filePath, Buffer.from(response.data))
-    return filePath
+    try {
+      const response = await axios.post("http://localhost:8880/v1/audio/speech", {
+        "model": "kokoro",
+        "input": speech.text,
+        "voice": speech.speaker == 'A' ? "af_alloy" : "af_bella",
+        "response_format": "mp3",
+        "download_format": "mp3",
+        "speed": 1,
+        "stream": true,
+        "return_download_link": true,
+        "lang_code": "b",
+      }, {
+        responseType: "arraybuffer"
+      })
+      
+      const fileName = `speech_${speech.speaker}_${index}.mp3`
+      const filePath = path.join(tempDir , fileName)
+      fs.writeFileSync(filePath, Buffer.from(response.data))
+      return filePath
+    } catch (error) {
+      fs.rmSync(tempDir, { recursive: true, force: true })
+      console.log("Something went wrong while generating audio files" , error)
+    }
   }))
 
   return {audios , tempDir}

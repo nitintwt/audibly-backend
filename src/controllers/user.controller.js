@@ -2,6 +2,7 @@ import createPodcastDraft from "../services/createPodcastDraft.service.js"
 import createAudioFiles from "../services/createAudioFiles.service.js"
 import mergeAudioFilesUsingFfmpeg from "../services/mergeAudioFilesFFmpeg.service.js"
 import fs from 'fs'
+import path from 'path'
 
 const createPodcast = async(req , res)=>{
   console.log("triggered")
@@ -19,11 +20,20 @@ const createPodcast = async(req , res)=>{
     await mergeAudioFilesUsingFfmpeg(audios, tempDir);
     console.log("saved")
 
-    res.status(200).json({ message: "Podcast created"})
-
-    // delete the temp folder
-    //fs.rmSync(tempDir, { recursive: true, force: true })
-    //console.log("Temporary files deleted.");
+    res.sendFile(path.join(tempDir, "final_podcast.mp3"), (err) => {
+      if (err) {
+        console.error("Error sending file:", err)
+      } else {
+        setTimeout(() => {
+          try {
+            fs.rmSync(tempDir, { recursive: true, force: true })
+            console.log("Temporary files deleted.")
+          } catch (deleteErr) {
+            console.error("Error deleting temp folder:", deleteErr)
+          }
+        }, 5000)
+      }
+    })
   } catch (error) {
     console.log("Something went wrong while creating audio" , error)
     return res.status(500).json({message:"Something went wrong while creating your podcast.Try again"})
