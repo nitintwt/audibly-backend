@@ -11,7 +11,8 @@ const createPodcastDraft = async (text)=>{
   - They should share ideas, challenge and build on each other's points, and offer balanced perspectives, rather than just asking and answering questions.
   
   **Output Requirements:**
-  - Your output must be exactly one ARRAY.
+  - Your output must be **exactly one JSON array**.
+  - The response **must start with "[" and end with "]"**.
   - Each element of the array must be an object with exactly two keys: "speaker" and "text".
   - The "speaker" value must be either "A" or "B" only.
   - Do not include any additional text, commentary, or nested arrays outside of this JSON array.
