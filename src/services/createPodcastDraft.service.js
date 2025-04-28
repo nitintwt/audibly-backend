@@ -32,6 +32,7 @@ const createPodcastDraft = async (text)=>{
   ]
 
   ** The output should always be a valid json array with open and closed brackets, []. No extra text or explanation.**
+  ** Never add "Here is the conversation between Speaker A and Speaker B:" intially. Always send the response in the above mentioned format. The response send by you is then passed to JSON.parse() , so send the response accordingly**
   `  
   try {
     const response = await await client.chat.completions.create({
