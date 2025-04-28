@@ -6,7 +6,11 @@ import path from 'path'
 
 const createPodcast = async(req , res)=>{
   console.log("triggered")
-  const {text} = req.body
+  let {text} = req.body
+  // there is a limit of number of tokens for groq api , that's why I am slicing the input text into length of 20000(5000 tokens approx) 
+  if(text.length > 20000){
+    text = text.slice(0 , 20000)
+  }
   try {
     // create podcast draft for speaker A and Speaker B
     const podcastDraft = await createPodcastDraft(text)
